@@ -1,9 +1,12 @@
 import pandas as pd
+import matplotlib as plt
 
+#Importação de dados
 df_iptu_fortaleza  = pd.read_csv('br_ce_fortaleza_sefin_iptu_face_quadra.csv', encoding='latin1')
 #print(df_iptu_fortaleza.columns)
 
-#Criando uma coluna categórica para definir o tipo de logradouro.
+# Tratamento de dados
+## Criando uma coluna categórica para definir o tipo de logradouro.
 def tipo_logradouro(logradouro):
     logradouro = str(logradouro)
     if logradouro.startswith('RUA') or logradouro.startswith('AVENIDA'):
@@ -24,15 +27,29 @@ def tipo_logradouro(logradouro):
         return None
 df_iptu_fortaleza['tipo_de_logradouro'] = df_iptu_fortaleza['logradouro'].apply(tipo_logradouro)
 
-#Alterar os valores das colunas de True e False para Sim e Não
+## Alterar os valores das colunas de True e False para Sim e Não
 colunas_alterar = df_iptu_fortaleza[['indicador_agua', 'indicador_esgoto', 'indicador_galeria_pluvial', 'indicador_sarjeta', 
                    'indicador_iluminacao_publica', 'indicador_arborizacao']]
 for coluna in colunas_alterar:
     df_iptu_fortaleza[coluna] = df_iptu_fortaleza[coluna].replace({'True': True, 'False': False})
     df_iptu_fortaleza[coluna] = df_iptu_fortaleza[coluna].replace({True: 'Sim', False: 'Não'})
 
+## Correção de nomes
 df_iptu_fortaleza['pavimentacao'] = df_iptu_fortaleza['pavimentacao'].replace({'Pedra rust': 'Pedra Rústica', 
                                                                                'ParalelepÃ\xadpedo': 'Paralelpípedo',
                                                                                'Sem PavimentaÃ§Ã£o': 'Sem Pavimentação'})
+## Valores ausentes
+missing_data = pd.DataFrame({
+    'Total Ausentes': df_iptu_fortaleza.isnull().sum(),
+    'Porcentagem %': (df_iptu_fortaleza.isnull().sum()/len(df_iptu_fortaleza) * 100).round(1)
+})
+#print(missing_data)
 
+missing_data_total = df_iptu_fortaleza.isnull().sum().sum()
+total_ausentes = df_iptu_fortaleza.shape[0] * df_iptu_fortaleza.shape[1]
+porcentagem_total = (missing_data_total / total_ausentes)*100
+#print(porcentagem_total)
+
+df_iptu_fortaleza = df_iptu_fortaleza.dropna()
+#print(df_iptu_fortaleza[colunas_alterar])
 df_iptu_fortaleza.to_excel('iptu_fortaleza.xlsx', index=False)
