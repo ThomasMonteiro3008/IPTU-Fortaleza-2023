@@ -51,5 +51,23 @@ porcentagem_total = (missing_data_total / total_ausentes)*100
 #print(porcentagem_total)
 
 df_iptu_fortaleza = df_iptu_fortaleza.dropna()
-#print(df_iptu_fortaleza[colunas_alterar])
-df_iptu_fortaleza.to_excel('iptu_fortaleza.xlsx', index=False)
+#print(df_iptu_fortaleza)
+#df_iptu_fortaleza.to_excel('iptu_fortaleza.xlsx', index=False)
+
+
+## Medidas
+pavimentacao_valores = df_iptu_fortaleza['pavimentacao'].value_counts()
+pct_sem_pavimentacao = ((df_iptu_fortaleza[df_iptu_fortaleza['pavimentacao'] == 'Sem Pavimentação']).count()) / (df_iptu_fortaleza.count()) *100
+#print(df_iptu_fortaleza)
+
+logradouros = df_iptu_fortaleza['tipo_de_logradouro'].value_counts()
+print(logradouros)
+
+i_agua = (df_iptu_fortaleza['indicador_agua'].value_counts(normalize=True)*100).round(1) ## Existência de rede de água
+i_esgoto = (df_iptu_fortaleza['indicador_esgoto'].value_counts(normalize=True)*100).round(1) ## Existência de rede de coleta de esgoto
+i_pluvial = (df_iptu_fortaleza['indicador_galeria_pluvial'].value_counts(normalize=True)*100).round(1)  ## Existência de rede de drenagem pluvial
+i_sarjeta = (df_iptu_fortaleza['indicador_sarjeta'].value_counts(normalize=True)*100).round(1) ## Existencia de meio-fio
+i_iluminacao = (df_iptu_fortaleza['indicador_iluminacao_publica'].value_counts(normalize=True)*100).round(1) ## Exitencia de iluminção pública
+i_arbo = (df_iptu_fortaleza['indicador_arborizacao'].value_counts(normalize=True)*100).round(1) ## Existencia de arborização planejada no canteiro central de vias duplas
+
+#print(f"% de rede de Água: {i_agua}, % de rede de Esgoto: {i_esgoto}, % de rede de Pluvial: {i_pluvial}")
